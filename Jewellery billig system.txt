@@ -1,0 +1,140 @@
+import java.util.Scanner;
+
+class Item {
+    String name;
+    double ratePerGram;
+    double weight;
+    double wastage;
+    double makingCharges;
+    double gst;
+
+    Item(String name, double ratePerGram) {
+        this.name = name;
+        this.ratePerGram = ratePerGram;
+    }
+    void inputWeight(Scanner sc) {
+        System.out.print("Enter weight in grams: ");
+        weight = sc.nextDouble();
+    }
+
+    double calculateBasePrice() {
+        return ratePerGram * weight;
+    }
+
+    void calculateCharges() {
+    }
+
+    double calculateTotal() {
+        return calculateBasePrice() + wastage + makingCharges + gst;
+    }
+    void printBill() {
+        System.out.printf("%-10s %8.2f %11.2f %10.2f %11.2f %10.2f %11.2f\n",
+                name, weight, calculateBasePrice(), wastage, makingCharges, gst, calculateTotal());
+    }
+}
+class Gold extends Item {
+    Gold() {
+        super("Gold", 6200.0);
+    }
+
+    void calculateCharges() {
+        wastage = 550.0;
+        makingCharges = 1200.0;
+        gst = 1905.0;
+    }
+}
+
+class Silver extends Item {
+    Silver() {
+        super("Silver", 75.0);
+    }
+
+    void calculateCharges() {
+        wastage = 100.0;
+        makingCharges = 400.0;
+        gst = 40.0;
+    }
+}
+
+class Platinum extends Item {
+    Platinum() {
+        super("Platinum", 3500.0);
+    }
+
+    void calculateCharges() {
+        wastage = 300.0;
+        makingCharges = 800.0;
+        gst = 450.0;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String continueSession = "yes";
+
+        while (continueSession.equalsIgnoreCase("yes")) {
+            Item[] items = new Item[10]; 
+            int itemCount = 0;
+            String addAnother = "yes";
+
+            while (addAnother.equalsIgnoreCase("yes") && itemCount < items.length) {
+                System.out.println("==== Jewellery Billing System ====\n");
+                System.out.println("Select Item:");
+                System.out.println("1. Gold (₹6200.0/g)");
+                System.out.println("2. Silver (₹75.0/g)");
+                System.out.println("3. Platinum (₹3500.0/g)");
+                System.out.print("Enter choice: ");
+                int choice = sc.nextInt();
+                sc.nextLine(); 
+
+                Item item = null;
+                if (choice == 1) {
+                    item = new Gold();
+                } else if (choice == 2) {
+                    item = new Silver();
+                } else if (choice == 3) {
+                    item = new Platinum();
+                } else {
+                    System.out.println("Invalid choice, try again.");
+                    continue;
+                }
+
+                item.inputWeight(sc);
+                sc.nextLine(); 
+
+                item.calculateCharges();
+
+                items[itemCount]=item;
+                itemCount++;
+
+                if (itemCount == items.length) {
+                    System.out.println("Maximum items reached.");
+                    break;
+                }
+
+                System.out.print("Do you want to add another item? (yes/no): ");
+                addAnother = sc.nextLine();
+            }
+
+            System.out.println("\n========== Final Bill ==========");
+            System.out.printf("%-10s %8s %11s %10s %11s %10s %11s\n",
+                    "Item", "Weight", "Base Price", "Wastage", "Making", "GST", "Total");
+
+            double grandTotal = 0;
+            for (int i = 0; i < itemCount; i++) {
+                items[i].printBill();
+                grandTotal += items[i].calculateTotal();
+            }
+            System.out.println("----------------------------------------------");
+            System.out.printf("Grand Total: ₹%.2f\n", grandTotal);
+            System.out.println("==============================================\n");
+
+            System.out.print("Do you want to start a new billing session? (yes/no): ");
+            continueSession = sc.nextLine();
+            System.out.println();
+        }
+
+        System.out.println("Thank you for shopping with us.... Visit Again!");
+    }
+}
